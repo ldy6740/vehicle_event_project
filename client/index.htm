@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="style.css">
+	<title>브레이크 이벤트 뷰어</title>
+</head>
+<body>
+	<section class="header-area">
+		<article id="logo" class="logo-area">
+			<!-- <img src="" alt=""> -->
+			 logo
+		</article>
+		<nav class="gnb-area">
+			<ul>
+				<li><a href="javascript:void(0);">실시간</a></li>
+				<li><a href="javascript:void(0);">조회</a></li>
+			</ul>
+		</nav>
+	</section>
+
+	<section class="search-area">
+		<!-- 조회 화면 -->
+		<form id="form">
+			<div class="input-box">
+				<input type="text" id="vehicle-number" placeholder="차량번호를 입력하세요">
+			</div>
+			<div class="input-box">
+				<input type="text" id="start-day" placeholder="기간 선택">
+			</div>
+			<!-- <div class="input-box">
+				<input type="text" id="end-day" placeholder="종료일 선택">
+			</div> -->
+			<div class="select-box">
+				<select type="text" id="start-time">
+					<option value="">시작시간</option>
+				</select>
+			</div>
+			<div class="select-box">
+				<select type="text" id="end-time">
+					<option value="">종료시간</option>
+				</select>
+			</div>
+			<div class="button-box">
+				<button type="submit" id="submit">조회</button>
+			</div>
+		</form>
+	</section>
+
+	<section class="map-area">
+		<article class="map-view" id="map">
+			<div class="dashboard-area">
+				<div class="dashboard-item">
+					<p class="item-label">브레이크 이벤트</p>
+					<p class="item-value">50회</p>
+				</div>
+				<div class="dashboard-item">
+					<p class="item-label">누적 감속 값(브레이크)</p>
+					<p class="item-value">50km/h</p>
+				</div>
+				<div class="dashboard-item">
+					<p class="item-label">감속 이벤트</p>
+					<p class="item-value">30회</p>
+				</div>
+				<div class="dashboard-item">
+					<p class="item-label">누적 감속 값(가속도계)</p>
+					<p class="item-value">50km/h</p>
+				</div>
+				<div class="dashboard-item">
+					<p class="item-label">총 주행거리</p>
+					<p class="item-value">100km/h</p>
+				</div>
+			</div>
+		</article>
+	</section>
+
+
+	<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+@charset "UTF-8";
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video, textarea, input, select {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%; /* 크기 동일화 */
+  font-family: "Noto Sans KR", sans-serif;
+  vertical-align: baseline; /* a안 img가 들어갈 때 a를 위로 정렬시켜 여백을 없앨 때 사용 */
+}
+
+html, body {
+  /* width: 100%;
+  height:100%; */
+  -webkit-text-size-adjust: none;
+  -moz-text-size-adjust: none;
+  -ms-text-size-adjust: none;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+body {
+  line-height: 1; /* 한글 기준은 1.2 */
+}
+
+ol, ul {
+  list-style: none;
+}
+
+blockquote, q {
+  quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: "";
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+i {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+strong {
+  font-weight: 700;
+}
+
+th, td {
+  vertical-align: middle;
+}
+
+input[type=password] {
+  font-family: initial;
+}
+
+.header-area {
+  background: #D9D9D9;
+  display: flex;
+  gap: 20px;
+  padding: 10px;
+}
+.header-area .logo-area {
+  width: 150px;
+  height: 40px;
+  background: #B6B6B6;
+  text-align: center;
+  line-height: 40px;
+}
+.header-area .gnb-area ul {
+  display: flex;
+  gap: 5px;
+}
+.header-area .gnb-area ul li {
+  width: 150px;
+  height: 40px;
+  background: #B6B6B6;
+  border-radius: 5px;
+  text-align: center;
+  line-height: 40px;
+}
+.header-area .gnb-area ul li.on {
+  background: #656565;
+  color: #fff;
+}
+.header-area .gnb-area ul li:hover {
+  background: #656565;
+  color: #fff;
+}
+
+.search-area {
+  margin-top: 10px;
+  background: #D9D9D9;
+  padding: 5px 20px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+}
+
+#form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#form > div > * {
+  width: 220px;
+  height: 40px;
+  border: 1px solid #ededed;
+  text-indent: 10px;
+  border-radius: 5px;
+}
+#form > div .button-box button {
+  background: #B6B6B6;
+}
+
+.map-area {
+  margin-top: 10px;
+  height: calc(100vh - 142px);
+  position: relative;
+}
+.map-area .map-view {
+  background: #ededed;
+  width: 100%;
+  height: 100%;
+}
+.map-area .dashboard-area {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.map-area .dashboard-area .dashboard-item {
+  background: #fff;
+  border: 1px solid #b9b9b9;
+  border-radius: 10px;
+  padding: 10px;
+  width: 150px;
+  height: 50px;
+  display: flex;
+  flex-direction: column;
+}
+.map-area .dashboard-area .dashboard-item .item-label {
+  font-size: 11px;
+  font-weight: bold;
+  flex: 1;
+}
+.map-area .dashboard-area .dashboard-item .item-value {
+  flex: 1;
+  text-align: right;
+  font-size: 19px;
+}/*# sourceMappingURL=style.css.map */

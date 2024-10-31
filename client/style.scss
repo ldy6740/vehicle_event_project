@@ -161,6 +161,7 @@ input[type=password]{
 		display: flex;
 		align-items: center;
 		gap: 10px;
+		z-index: 999;
 		.dashboard-item {
 			background: #fff;
 			border:1px solid #b9b9b9;

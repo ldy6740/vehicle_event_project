@@ -4,6 +4,8 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="style.css">
+
+
 	<title>브레이크 이벤트 뷰어</title>
 </head>
 <body>
@@ -14,7 +16,7 @@
 		</article>
 		<nav class="gnb-area">
 			<ul>
-				<li><a href="javascript:void(0);">실시간</a></li>
+				<li class="on"><a href="javascript:void(0);">실시간</a></li>
 				<li><a href="javascript:void(0);">조회</a></li>
 			</ul>
 		</nav>
@@ -26,13 +28,13 @@
 			<div class="input-box">
 				<input type="text" id="vehicle-number" placeholder="차량번호를 입력하세요">
 			</div>
-			<div class="input-box">
+			<!-- <div class="input-box">
 				<input type="text" id="start-day" placeholder="기간 선택">
-			</div>
+			</div> -->
 			<!-- <div class="input-box">
 				<input type="text" id="end-day" placeholder="종료일 선택">
 			</div> -->
-			<div class="select-box">
+			<!-- <div class="select-box">
 				<select type="text" id="start-time">
 					<option value="">시작시간</option>
 				</select>
@@ -41,7 +43,7 @@
 				<select type="text" id="end-time">
 					<option value="">종료시간</option>
 				</select>
-			</div>
+			</div> -->
 			<div class="button-box">
 				<button type="submit" id="submit">조회</button>
 			</div>
@@ -76,6 +78,10 @@
 	</section>
 
 
+	
+	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=4b86c4b3d058bd29c2b59efb3d852a43"></script>
+
 	<script src="app.js"></script>
+
 </body>
 </html>

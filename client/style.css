@@ -157,6 +157,7 @@ input[type=password] {
   display: flex;
   align-items: center;
   gap: 10px;
+  z-index: 999;
 }
 .map-area .dashboard-area .dashboard-item {
   background: #fff;

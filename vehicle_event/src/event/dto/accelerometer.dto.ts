@@ -13,36 +13,21 @@ export class AccelerDto {
 	@IsString()
 	number: string;
 
-	@ApiProperty({ example: "35.482044", description: "위도 ddmm.mmmm" })
+	@ApiProperty({
+		example: "2024-10-25 12:06:06",
+		description: "조회 시작 시간",
+	})
 	@IsOptional()
+	//@IsDateString()
 	@IsString()
-	latitude: string;
-
-	@ApiProperty({ example: "129.351166", description: "경도 dddmm.mmmm" })
-	@IsOptional()
-	@IsString()
-	longitude: string;
+	starttime: string;
 
 	@ApiProperty({
 		example: "2024-10-25 15:06:06",
-		description: "브레이크ON 시작된 시각",
+		description: "조회 종료 시간",
 	})
 	@IsOptional()
 	//@IsDateString()
 	@IsString()
-	ontime: string;
-
-	@ApiProperty({
-		example: "14268",
-		description: "브레이크ON-감속이벤트 인터벌",
-	})
-	@IsOptional()
-	@IsInt()
-	interval?: number;
-
-	@ApiProperty({ example: "2024-10-25 15:06:50", description: "DBMS 시각" })
-	@IsOptional()
-	//@IsDateString()
-	@IsString()
-	logtime?: string;
+	endtime: string;
 }

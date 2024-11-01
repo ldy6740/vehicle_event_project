@@ -15,11 +15,8 @@ export class EventService {
 
 	async findAccelerometer(
 		number: string,
-		latitude: string,
-		longitude: string,
-		ontime: string,
-		interval: number,
-		logtime: string,
+		starttime: string,
+		endtime: string,
 	) {
 		try {
 			//this.logger.log(accelerDto);
@@ -29,35 +26,26 @@ export class EventService {
 
 			//this.logger.log(accelerDto);
 			let strQuery = `
-							SELECT Vehicle_Number, GPS_Latitude, GPS_Longitude, Brake_ON_GPS_DateTime, Brake_ON_Event_Interval, Deceleration, Speed, Distance_Traveled, Logging_DateTime, Check_Interval, Calc_Value, GPS_Speed
+							SELECT DISTINCT Vehicle_Number, GPS_Latitude, GPS_Longitude
 								FROM accelerometer_event
 								WHERE Vehicle_Number = '${number}'
 							`;
-			if (latitude) {
+			if (starttime) {
 				strQuery += `
-							AND GPS_Latitude = '${latitude}'
+							AND Brake_ON_GPS_DateTime >= '${starttime}'
 							`;
 			}
-			if (longitude) {
+			if (endtime) {
 				strQuery += `
-							AND GPS_Longitude = '${longitude}'
+							AND Brake_ON_GPS_DateTime <'${endtime}'
 							`;
 			}
-			if (ontime) {
-				strQuery += `
-							AND Brake_ON_GPS_DateTime >= '${ontime}'
-							`;
-			}
-			if (interval > 0) {
-				strQuery += `
-							AND Brake_ON_Event_Interval = '${interval}'
-							`;
-			}
-			if (logtime) {
-				strQuery += `
-							AND Logging_DateTime >= '${logtime}'
-							`;
-			}
+			// this.logger.log(starttime);
+			// this.logger.log(endtime);
+			
+			// strQuery += `
+			// 	GROUP BY Vehicle_Number, GPS_Latitude, GPS_Longitude
+			// `
 			this.logger.log(strQuery);
 			const rawData = await this.accelerometer.query(strQuery);
 			if (rawData.length !== 0) {

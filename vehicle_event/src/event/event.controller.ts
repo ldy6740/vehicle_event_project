@@ -39,41 +39,14 @@ export class EventController {
 	@Get("/accelerometer")
 	async findAccelerometer(
 		@Query("number") number: string,
-		@Query("latitude") latitude: string,
-		@Query("longitude") longitude: string,
-		@Query("ontime") ontime: string,
-		@Query("interval") interval: number,
-		@Query("logtime") logtime: string,
+		@Query("starttime") starttime: string,
+		@Query("endtime") endtime: string,
 	) {
-		this.logger.log(
-			number +
-				" / " +
-				latitude +
-				" / " +
-				longitude +
-				" / " +
-				ontime +
-				" / " +
-				interval +
-				" / " +
-				logtime,
-		);
+		this.logger.log(number + " / " + starttime + " / " + endtime);
 		return await this.eventService.findAccelerometer(
 			number,
-			latitude,
-			longitude,
-			ontime,
-			interval,
-			logtime,
+			starttime,
+			endtime,
 		);
 	}
-
-	/*
-	async findAccelerometer(
-		@Body() accelerDto: AccelerDto,
-	): Promise<AccelerDto> {
-		this.logger.log("EventController");
-		return await this.eventService.findAccelerometer(accelerDto);
-	}
-	*/
 }

@@ -39,12 +39,22 @@ export class EventController {
 	@Get("/accelerometer")
 	async findAccelerometer(
 		@Query("number") number: string,
+		@Query("firststarttime") firststarttime: string,
 		@Query("starttime") starttime: string,
 		@Query("endtime") endtime: string,
 	) {
-		this.logger.log(number + " / " + starttime + " / " + endtime);
+		this.logger.log(
+			number +
+				" / " +
+				firststarttime +
+				" / " +
+				starttime +
+				" / " +
+				endtime,
+		);
 		return await this.eventService.findAccelerometer(
 			number,
+			firststarttime,
 			starttime,
 			endtime,
 		);

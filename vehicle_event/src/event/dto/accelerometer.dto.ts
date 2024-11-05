@@ -1,17 +1,20 @@
 import { ApiProperty } from "@nestjs/swagger";
-import {
-	IsNotEmpty,
-	IsString,
-	IsInt,
-	IsDateString,
-	IsOptional,
-} from "class-validator";
+import { IsNotEmpty, IsString, IsOptional } from "class-validator";
 
 export class AccelerDto {
 	@ApiProperty({ example: "12가3456", description: "차량번호" })
 	@IsNotEmpty()
 	@IsString()
 	number: string;
+
+	@ApiProperty({
+		example: "2024-10-25 12:06:06",
+		description: "조회 최초 시작 시간",
+	})
+	@IsOptional()
+	//@IsDateString()
+	@IsString()
+	firststarttime: string;
 
 	@ApiProperty({
 		example: "2024-10-25 12:06:06",

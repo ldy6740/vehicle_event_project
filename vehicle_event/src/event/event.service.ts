@@ -15,40 +15,99 @@ export class EventService {
 
 	async findAccelerometer(
 		number: string,
+		firststarttime: string,
 		starttime: string,
 		endtime: string,
 	) {
 		try {
-			//this.logger.log(accelerDto);
-			//const number = accelerDto.number;
-			//const latitude = accelerDto.latitude;
-			//const longitude = accelerDto.longitude;
+			//	다. 제동(브레이크) 누적 감속 값 = sum(calc_value)
+			//	마. 감속(가속도계) 누적 감속 값 = sum(calc_value)
+			//	바. 주행거리 ==> max(Distance_Traveled) - min(Distance_Traveled)
+			//	제동(브레이크) 이벤트 횟수(3단계 경계 값 설정, 강/중/약/계 표시)
+			//	감속(가속도계) 이벤트 횟수(3단계 경계 값 설정, 강/중/약/계 표시)
 
-			//this.logger.log(accelerDto);
-			let strQuery = `
-							SELECT DISTINCT Vehicle_Number, GPS_Latitude, GPS_Longitude
-								FROM accelerometer_event
-								WHERE Vehicle_Number = '${number}'
-							`;
-			if (starttime) {
-				strQuery += `
-							AND Brake_ON_GPS_DateTime >= '${starttime}'
-							`;
-			}
-			if (endtime) {
-				strQuery += `
-							AND Brake_ON_GPS_DateTime <'${endtime}'
-							`;
-			}
-			// this.logger.log(starttime);
-			// this.logger.log(endtime);
-			
-			// strQuery += `
-			// 	GROUP BY Vehicle_Number, GPS_Latitude, GPS_Longitude
-			// `
-			this.logger.log(strQuery);
+			const strQuery = `
+								SELECT	DISTINCT accel.Vehicle_Number, accel.GPS_Latitude, accel.GPS_Longitude, accel.calc_value, 'accel' AS gubun,
+										(
+											SELECT sum(calc_value)
+											FROM accelerometer_event
+											WHERE Vehicle_Number = '${number}' AND Brake_ON_GPS_DateTime > '${firststarttime}' AND Brake_ON_GPS_DateTime <= '${endtime}'
+										) AS calc_value_sum,
+										(
+											SELECT max(Distance_Traveled) - min(Distance_Traveled)
+											FROM accelerometer_event
+											WHERE Vehicle_Number = '${number}' AND Brake_ON_GPS_DateTime > '${firststarttime}' AND Brake_ON_GPS_DateTime <= '${endtime}'
+										) AS Distance_Traveled,
+										(
+											SELECT COUNT(accel.Vehicle_Number)
+											FROM accelerometer_event AS accel
+											INNER JOIN value_code AS vcode ON
+											vcode.Event = 'accelerometer' AND vcode.Step = '강'
+											WHERE accel.Vehicle_Number = '${number}' AND accel.Brake_ON_GPS_DateTime > '${firststarttime}' AND accel.Brake_ON_GPS_DateTime <= '${endtime}'
+											AND accel.Calc_Value >= vcode.Min_Value AND accel.Calc_Value <= vcode.Max_Value
+										) AS Calc_Value_sum1,
+										(
+											SELECT COUNT(accel.Vehicle_Number)
+											FROM accelerometer_event AS accel
+											INNER JOIN value_code AS vcode ON
+											vcode.Event = 'accelerometer' AND vcode.Step = '중'
+											WHERE accel.Vehicle_Number = '${number}' AND accel.Brake_ON_GPS_DateTime > '${firststarttime}' AND accel.Brake_ON_GPS_DateTime <= '${endtime}'
+											AND accel.Calc_Value >= vcode.Min_Value AND accel.Calc_Value <= vcode.Max_Value
+										) AS Calc_Value_sum2,
+										(
+											SELECT COUNT(accel.Vehicle_Number)
+											FROM accelerometer_event AS accel
+											INNER JOIN value_code AS vcode ON
+											vcode.Event = 'accelerometer' AND vcode.Step = '약'
+											WHERE accel.Vehicle_Number = '${number}' AND accel.Brake_ON_GPS_DateTime > '${firststarttime}' AND accel.Brake_ON_GPS_DateTime <= '${endtime}'
+											AND accel.Calc_Value >= vcode.Min_Value AND accel.Calc_Value <= vcode.Max_Value
+										) AS Calc_Value_sum3, accel.Brake_ON_GPS_DateTime	
+								FROM accelerometer_event AS accel
+								WHERE accel.Vehicle_Number = '${number}' AND accel.Brake_ON_GPS_DateTime > '${starttime}' AND accel.Brake_ON_GPS_DateTime <= '${endtime}'
+
+								UNION ALL
+
+								SELECT DISTINCT brake.Vehicle_Number, brake.GPS_Latitude, brake.GPS_Longitude, brake.calc_value, 'brake' AS gubun,
+										(
+											SELECT sum(calc_value)
+											FROM brake_event
+											WHERE Vehicle_Number = '${number}' AND Brake_ON_GPS_DateTime > '${firststarttime}' AND Brake_ON_GPS_DateTime <= '${endtime}'
+										) AS calc_value_sum,
+										(
+											SELECT max(Distance_Traveled) - min(Distance_Traveled)	
+											FROM brake_event
+											WHERE Vehicle_Number = '${number}' AND Brake_ON_GPS_DateTime > '${firststarttime}' AND Brake_ON_GPS_DateTime <= '${endtime}'
+										) AS Distance_Traveled,
+										(
+											SELECT COUNT(brake.Vehicle_Number)
+											FROM brake_event AS brake
+											INNER JOIN value_code AS vcode ON
+											vcode.Event = 'brake' AND vcode.Step = '강'
+											WHERE brake.Vehicle_Number = '${number}' AND brake.Brake_ON_GPS_DateTime > '${firststarttime}' AND brake.Brake_ON_GPS_DateTime <= '${endtime}'
+											AND brake.Calc_Value >= vcode.Min_Value AND brake.Calc_Value <= vcode.Max_Value
+										) AS Calc_Value_sum1,
+										(
+											SELECT COUNT(brake.Vehicle_Number)
+											FROM brake_event AS brake
+											INNER JOIN value_code AS vcode ON
+											vcode.Event = 'brake' AND vcode.Step = '중'
+											WHERE brake.Vehicle_Number = '${number}' AND brake.Brake_ON_GPS_DateTime > '${firststarttime}' AND brake.Brake_ON_GPS_DateTime <= '${endtime}'
+											AND brake.Calc_Value >= vcode.Min_Value AND brake.Calc_Value <= vcode.Max_Value
+										) AS Calc_Value_sum2,
+										(
+											SELECT COUNT(brake.Vehicle_Number)
+											FROM brake_event AS brake
+											INNER JOIN value_code AS vcode ON
+											vcode.Event = 'brake' AND vcode.Step = '약'
+											WHERE brake.Vehicle_Number = '${number}' AND brake.Brake_ON_GPS_DateTime > '${firststarttime}' AND brake.Brake_ON_GPS_DateTime <= '${endtime}'
+											AND brake.Calc_Value >= vcode.Min_Value AND brake.Calc_Value <= vcode.Max_Value
+										) AS Calc_Value_sum3, brake.Brake_ON_GPS_DateTime
+								FROM brake_event AS brake
+								WHERE brake.Vehicle_Number = '${number}' AND brake.Brake_ON_GPS_DateTime > '${starttime}' AND brake.Brake_ON_GPS_DateTime <= '${endtime}'
+								ORDER BY Brake_ON_GPS_DateTime ASC
+								`;
 			const rawData = await this.accelerometer.query(strQuery);
-			if (rawData.length !== 0) {
+			if (rawData.length > 0) {
 				//const result = rawData[0]; //하나만 뽑을 때
 				return rawData;
 			} else {

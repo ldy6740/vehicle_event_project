@@ -1,29 +1,29 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString, IsDateString } from "class-validator";
+import { IsString, IsNumber, IsNotEmpty } from "class-validator";
 
-export class TimerDto {
+export class CodeDto {
 	@ApiProperty()
 	@IsNotEmpty()
 	@IsString()
-	number: string;
-
-	@ApiProperty()
-	@IsNotEmpty()
-	@IsString()
-	latitude: string;
+	event: string;
 
 	@ApiProperty()
 	@IsNotEmpty()
 	@IsString()
-	longitude: string;
+	step: string;
 
 	@ApiProperty()
 	@IsNotEmpty()
-	@IsDateString()
-	gpstime: string;
+	@IsString()
+	min: string;
 
 	@ApiProperty()
 	@IsNotEmpty()
-	@IsDateString()
-	logtime: string;
+	@IsString()
+	max: string;
+
+	@ApiProperty()
+	@IsNotEmpty()
+	@IsString()
+	opacity: string;
 }

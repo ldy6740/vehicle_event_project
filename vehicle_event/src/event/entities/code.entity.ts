@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
 
 @Entity({ name: "value_code" }) // 데이터베이스 테이블의 이름
-export class ValueCodeEntitiy {
+export class CodeEntitiy {
 	@PrimaryColumn({
 		name: "Event",
 		type: "varchar",
@@ -29,4 +29,11 @@ export class ValueCodeEntitiy {
 		nullable: true,
 	})
 	Max_Value: number;
+
+	@Column({
+		name: "opacity",
+		type: "float",
+		nullable: true,
+	})
+	opacity: number;
 }

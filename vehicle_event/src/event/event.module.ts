@@ -5,10 +5,6 @@ import { AccelerometerEntitiy } from "./entities/";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
 @Module({
-	controllers: [EventController],
-	providers: [EventService],
-})
-@Module({
 	imports: [TypeOrmModule.forFeature([AccelerometerEntitiy])],
 	controllers: [EventController],
 	providers: [EventService],

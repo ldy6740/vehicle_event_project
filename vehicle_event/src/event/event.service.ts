@@ -1,13 +1,14 @@
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { AccelerDto } from "./dto/";
+import { InjectRepository, InjectDataSource } from "@nestjs/typeorm";
+import { Repository, DataSource } from "typeorm";
+import { CodeDto } from "./dto/";
 import { AccelerometerEntitiy } from "./entities/";
 import { LoggerService } from "../common";
 
 @Injectable()
 export class EventService {
 	constructor(
+		@InjectDataSource() private dataSource: DataSource,
 		@InjectRepository(AccelerometerEntitiy)
 		private readonly accelerometer: Repository<AccelerometerEntitiy>,
 		private readonly logger: LoggerService,
@@ -39,6 +40,16 @@ export class EventService {
 											WHERE Vehicle_Number = '${number}' AND Brake_ON_GPS_DateTime > '${firststarttime}' AND Brake_ON_GPS_DateTime <= '${endtime}'
 										) AS Distance_Traveled,
 										(
+											SELECT Step
+											FROM value_code AS vcode
+											WHERE accel.Calc_Value >= vcode.Min_Value AND accel.Calc_Value < vcode.Max_Value AND vcode.Event = 'accelerometer'
+										) AS Calc_Value_Gubun,
+										(
+											SELECT opacity
+											FROM value_code AS vcode
+											WHERE accel.Calc_Value >= vcode.Min_Value AND accel.Calc_Value < vcode.Max_Value AND vcode.Event = 'accelerometer'
+										) AS Calc_Value_opacity,
+										(
 											SELECT COUNT(accel.Vehicle_Number)
 											FROM accelerometer_event AS accel
 											INNER JOIN value_code AS vcode ON
@@ -61,7 +72,7 @@ export class EventService {
 											vcode.Event = 'accelerometer' AND vcode.Step = '약'
 											WHERE accel.Vehicle_Number = '${number}' AND accel.Brake_ON_GPS_DateTime > '${firststarttime}' AND accel.Brake_ON_GPS_DateTime <= '${endtime}'
 											AND accel.Calc_Value >= vcode.Min_Value AND accel.Calc_Value <= vcode.Max_Value
-										) AS Calc_Value_sum3, accel.Brake_ON_GPS_DateTime	
+										) AS Calc_Value_sum3, accel.Brake_ON_GPS_DateTime
 								FROM accelerometer_event AS accel
 								WHERE accel.Vehicle_Number = '${number}' AND accel.Brake_ON_GPS_DateTime > '${starttime}' AND accel.Brake_ON_GPS_DateTime <= '${endtime}'
 
@@ -78,6 +89,16 @@ export class EventService {
 											FROM brake_event
 											WHERE Vehicle_Number = '${number}' AND Brake_ON_GPS_DateTime > '${firststarttime}' AND Brake_ON_GPS_DateTime <= '${endtime}'
 										) AS Distance_Traveled,
+										(
+											SELECT Step
+											FROM value_code AS vcode
+											WHERE brake.Calc_Value >= vcode.Min_Value AND brake.Calc_Value < vcode.Max_Value AND vcode.Event = 'brake'
+										) AS Calc_Value_Gubun,
+										(
+											SELECT opacity
+											FROM value_code AS vcode
+											WHERE brake.Calc_Value >= vcode.Min_Value AND brake.Calc_Value < vcode.Max_Value AND vcode.Event = 'brake'
+										) AS Calc_Value_opacity,
 										(
 											SELECT COUNT(brake.Vehicle_Number)
 											FROM brake_event AS brake
@@ -115,6 +136,26 @@ export class EventService {
 			}
 		} catch (error) {
 			this.logger.log(error.message);
+		}
+	}
+
+	async saveCodeValue(codeDto: CodeDto) {
+		try {
+			const strQuery = `
+								INSERT INTO value_code1
+									(Event, Step, Min_Value, Max_Value, opacity) VALUES
+									('${codeDto.event}','${codeDto.step}','${codeDto.min}','${codeDto.max}','${codeDto.opacity}')
+								ON DUPLICATE KEY UPDATE
+									Min_Value				=	'${codeDto.min}',
+									Max_Value				=	'${codeDto.max}',
+									opacity					=	'${codeDto.opacity}'
+								`;
+			const result = await this.dataSource.query(strQuery);
+			console.log("saveCodeValue : " + result);
+			return true;
+		} catch (error) {
+			this.logger.log(error.message);
+			return false;
 		}
 	}
 }

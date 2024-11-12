@@ -1,26 +1,18 @@
 import {
 	Controller,
 	Post,
-	Body,
 	UseGuards,
 	Get,
-	Param,
-	Patch,
-	Delete,
 	Query,
+	Body,
+	Param,
+	Request,
 } from "@nestjs/common";
-import {
-	ApiBody,
-	ApiOkResponse,
-	ApiOperation,
-	ApiParam,
-	ApiSecurity,
-} from "@nestjs/swagger";
-import { ClientTimezone } from "../common/decorators";
+import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 import { ApplicationAuthGuard } from "../auth/guards";
 import { AccelerDto } from "./dto/";
+import { CodeDto } from "./dto/";
 import { EventService } from "./event.service";
-import { EventParamValidationPipe } from "./pipes";
 import { LoggerService } from "../common";
 
 @Controller("event")
@@ -33,7 +25,7 @@ export class EventController {
 	@UseGuards(ApplicationAuthGuard)
 	@ApiOperation({
 		summary: "가속도계 이벤트 정보 조회",
-		description: "가속도계 이벤트 정보를 조회합니다",
+		description: "가속도, 브레이크 이벤트 정보를 조회",
 	})
 	@ApiOkResponse({ description: "조회성공", type: AccelerDto })
 	@Get("/accelerometer")
@@ -58,5 +50,22 @@ export class EventController {
 			starttime,
 			endtime,
 		);
+	}
+
+	@UseGuards(ApplicationAuthGuard)
+	@ApiOperation({
+		summary: "강중약에 대한 정보 저장",
+		description: "강중약에 대한 정보 저장",
+	})
+	@ApiOkResponse({ description: "저장성공", type: CodeDto })
+	@Post("/code")
+	async saveCodeValue(@Body() codeDto: CodeDto) {
+		this.logger.log(codeDto);
+		const result = await this.eventService.saveCodeValue(codeDto);
+		if (result) {
+			return "{'resultCode':'200'}";
+		} else {
+			return "{'resultCode':'100'}";
+		}
 	}
 }

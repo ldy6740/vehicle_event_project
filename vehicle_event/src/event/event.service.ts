@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository, InjectDataSource } from "@nestjs/typeorm";
-import { Repository, DataSource } from "typeorm";
-import { CodeDto } from "./dto/";
+import { Repository, DataSource, Transaction } from "typeorm";
+import { ValidationArrayCodeDto } from "./dto/";
 import { AccelerometerEntitiy } from "./entities/";
 import { LoggerService } from "../common";
 
@@ -139,23 +139,37 @@ export class EventService {
 		}
 	}
 
-	async saveCodeValue(codeDto: CodeDto) {
+	async saveCodeValue(arrayCodeDto: ValidationArrayCodeDto) {
+		let strQuery = "";
+		const queryRunner = this.dataSource.createQueryRunner();
+		await queryRunner.connect();
+		await queryRunner.startTransaction();
+
 		try {
-			const strQuery = `
-								INSERT INTO value_code1
+			const items = arrayCodeDto.items;
+			items.forEach((element) => {
+				strQuery = `
+								INSERT INTO value_code
 									(Event, Step, Min_Value, Max_Value, opacity) VALUES
-									('${codeDto.event}','${codeDto.step}','${codeDto.min}','${codeDto.max}','${codeDto.opacity}')
+									('${element.event}','${element.step}','${element.min}','${element.max}','${element.opacity}')
 								ON DUPLICATE KEY UPDATE
-									Min_Value				=	'${codeDto.min}',
-									Max_Value				=	'${codeDto.max}',
-									opacity					=	'${codeDto.opacity}'
+									Min_Value				=	'${element.min}',
+									Max_Value				=	'${element.max}',
+									opacity					=	'${element.opacity}';
 								`;
-			const result = await this.dataSource.query(strQuery);
-			console.log("saveCodeValue : " + result);
+				queryRunner.manager.query(strQuery);
+			});
+			await queryRunner.commitTransaction();
+			this.logger.log("commitTransaction");
 			return true;
 		} catch (error) {
+			await queryRunner.rollbackTransaction();
+			this.logger.log("rollbackTransaction");
 			this.logger.log(error.message);
 			return false;
+		} finally {
+			await queryRunner.release();
+			this.logger.log("release");
 		}
 	}
 }

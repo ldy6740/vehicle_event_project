@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsNumber, IsNotEmpty } from "class-validator";
+import { Type } from "class-transformer";
+import { IsString, IsNotEmpty, ValidateNested } from "class-validator";
 
 export class CodeDto {
 	@ApiProperty()
@@ -26,4 +27,10 @@ export class CodeDto {
 	@IsNotEmpty()
 	@IsString()
 	opacity: string;
+}
+
+export class ValidationArrayCodeDto {
+	@ValidateNested({ each: true })
+	@Type(() => CodeDto)
+	items: CodeDto[];
 }

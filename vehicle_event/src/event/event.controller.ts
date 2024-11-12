@@ -5,13 +5,12 @@ import {
 	Get,
 	Query,
 	Body,
-	Param,
-	Request,
+	ParseArrayPipe,
 } from "@nestjs/common";
 import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 import { ApplicationAuthGuard } from "../auth/guards";
 import { AccelerDto } from "./dto/";
-import { CodeDto } from "./dto/";
+import { CodeDto, ValidationArrayCodeDto } from "./dto/";
 import { EventService } from "./event.service";
 import { LoggerService } from "../common";
 
@@ -52,6 +51,7 @@ export class EventController {
 		);
 	}
 
+	//	https://velog.io/@wndbsgkr/NestJS
 	@UseGuards(ApplicationAuthGuard)
 	@ApiOperation({
 		summary: "강중약에 대한 정보 저장",
@@ -59,9 +59,9 @@ export class EventController {
 	})
 	@ApiOkResponse({ description: "저장성공", type: CodeDto })
 	@Post("/code")
-	async saveCodeValue(@Body() codeDto: CodeDto) {
-		this.logger.log(codeDto);
-		const result = await this.eventService.saveCodeValue(codeDto);
+	async saveCodeValue(@Body() arrayCodeDto: ValidationArrayCodeDto) {
+		//this.logger.log("saveCodeValue1 : " + arrayCodeDto);
+		const result = await this.eventService.saveCodeValue(arrayCodeDto);
 		if (result) {
 			return "{'resultCode':'200'}";
 		} else {

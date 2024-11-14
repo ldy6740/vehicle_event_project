@@ -68,4 +68,15 @@ export class EventController {
 			return "{'resultCode':'100'}";
 		}
 	}
+
+	@UseGuards(ApplicationAuthGuard)
+	@ApiOperation({
+		summary: "저장된 강중약 값 조회",
+		description: "브레이크, 감속의 강중약 설정값 조회",
+	})
+	@ApiOkResponse({ description: "조회성공", type: AccelerDto })
+	@Get("/value")
+	async getCode() {
+		return await this.eventService.getCode();
+	}
 }

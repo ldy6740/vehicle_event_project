@@ -21,19 +21,19 @@ export class CodeEntitiy {
 		type: "float",
 		nullable: true,
 	})
-	Min_Value: number;
+	Min_Value: string;
 
 	@Column({
 		name: "Max_Value",
 		type: "float",
 		nullable: true,
 	})
-	Max_Value: number;
+	Max_Value: string;
 
 	@Column({
 		name: "opacity",
 		type: "float",
 		nullable: true,
 	})
-	opacity: number;
+	opacity: string;
 }

@@ -2,15 +2,13 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository, InjectDataSource } from "@nestjs/typeorm";
 import { Repository, DataSource, Transaction } from "typeorm";
 import { ValidationArrayCodeDto } from "./dto/";
-import { AccelerometerEntitiy } from "./entities/";
+import { AccelerometerEntitiy, CodeEntitiy } from "./entities/";
 import { LoggerService } from "../common";
 
 @Injectable()
 export class EventService {
 	constructor(
 		@InjectDataSource() private dataSource: DataSource,
-		@InjectRepository(AccelerometerEntitiy)
-		private readonly accelerometer: Repository<AccelerometerEntitiy>,
 		private readonly logger: LoggerService,
 	) {}
 
@@ -26,7 +24,6 @@ export class EventService {
 			//	바. 주행거리 ==> max(Distance_Traveled) - min(Distance_Traveled)
 			//	제동(브레이크) 이벤트 횟수(3단계 경계 값 설정, 강/중/약/계 표시)
 			//	감속(가속도계) 이벤트 횟수(3단계 경계 값 설정, 강/중/약/계 표시)
-
 			const strQuery = `
 								SELECT	DISTINCT accel.Vehicle_Number, accel.GPS_Latitude, accel.GPS_Longitude, accel.calc_value, 'accel' AS gubun,
 										(
@@ -127,7 +124,7 @@ export class EventService {
 								WHERE brake.Vehicle_Number = '${number}' AND brake.Brake_ON_GPS_DateTime > '${starttime}' AND brake.Brake_ON_GPS_DateTime <= '${endtime}'
 								ORDER BY Brake_ON_GPS_DateTime ASC
 								`;
-			const rawData = await this.accelerometer.query(strQuery);
+			const rawData = await this.dataSource.manager.query(strQuery);
 			if (rawData.length > 0) {
 				//const result = rawData[0]; //하나만 뽑을 때
 				return rawData;
@@ -157,6 +154,7 @@ export class EventService {
 									Max_Value				=	'${element.max}',
 									opacity					=	'${element.opacity}';
 								`;
+				//this.logger.log("strQuery" + strQuery);
 				queryRunner.manager.query(strQuery);
 			});
 			await queryRunner.commitTransaction();
@@ -165,11 +163,28 @@ export class EventService {
 		} catch (error) {
 			await queryRunner.rollbackTransaction();
 			this.logger.log("rollbackTransaction");
-			this.logger.log(error.message);
+			this.logger.log("error : " + error.message);
 			return false;
 		} finally {
 			await queryRunner.release();
 			this.logger.log("release");
+		}
+	}
+
+	async getCode() {
+		try {
+			const strQuery = `
+									SELECT Event, Step, Min_Value, Max_Value, opacity FROM value_code ORDER BY Event, FIELD(Step, '강','중','약')
+								`;
+			const rawData = await this.dataSource.manager.query(strQuery);
+			if (rawData.length > 0) {
+				//const result = rawData[0]; //하나만 뽑을 때
+				return rawData;
+			} else {
+				return "";
+			}
+		} catch (error) {
+			this.logger.log(error.message);
 		}
 	}
 }
